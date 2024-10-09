@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Placeholder from '../../../assets/img-placeholder.jpg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsBookmark, BsFillBookmarkCheckFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,9 +11,8 @@ const ProjectCard = ({
 }) => {
   const navigate = useNavigate();
 
-  const [isBookmarked, setIsBookmarked] = useState(
-    bookMarkProjects.includes(project.projectLink)
-  );
+  const [isBookmarked, setIsBookmarked] = useState(bookMarkProjects.includes(project.projectLink));
+
   
 
   const tags = project.tags.map((tag, key) => (
@@ -25,8 +24,9 @@ const ProjectCard = ({
     </span>
   ));
 
-  const handleClick = () => {
-    setIsBookmarked(!isBookmarked);
+
+  const handleBookmark = () => {
+  
 
     // If the project is already bookmarked, remove it from the list
     if (isBookmarked) {
@@ -34,14 +34,18 @@ const ProjectCard = ({
         localStorage.getItem('bookMarkProjects')
       );
 
+      console.log("bookMarkProjects", bookMarkProjects);
+
       bookMarkProjects = bookMarkProjects.filter(
-        (project) => project !== projectLink
+        (link) => link !== project.projectLink
       );
       localStorage.setItem(
         'bookMarkProjects',
         JSON.stringify(bookMarkProjects)
       );
+      
       getBookMarkProjects(); // Update the bookmark list
+      setIsBookmarked(false);
       return;
     }
 
@@ -60,9 +64,15 @@ const ProjectCard = ({
         JSON.stringify(bookMarkProjects)
       );
       getBookMarkProjects(); // Update the bookmark list
+      setIsBookmarked(true);
       return;
     }
   };
+
+
+  // useEffect(() => {
+  //   setIsBookmarked(bookMarkProjects.includes(project.projectLink));
+  // }, [isBookmarked]);
 
   const handleViewIssues = (projectLink) => {
     const [organization, projectName] = projectLink.split('/').slice(-2);
@@ -75,7 +85,7 @@ const ProjectCard = ({
     <div className="flex self-auto flex-col h-full w-96 max-w-full border rounded-lg shadow bg-gray-800 border-gray-700 relative">
       <div
         className="absolute text-2xl right-2 top-2 text-yellow-400 cursor-pointer"
-        onClick={handleClick}
+        onClick={handleBookmark}
       >
         {isBookmarked ? <BsFillBookmarkCheckFill /> : <BsBookmark />}
       </div>
@@ -96,7 +106,7 @@ const ProjectCard = ({
       <div className="grid grid-cols-1 h-full p-5">
         <a href={project.projectLink}>
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-white capitalize">
-            {name}
+            {project.name}
           </h5>
         </a>
         <p className="mb-3 font-normal text-gray-400">{project?.description}</p>
