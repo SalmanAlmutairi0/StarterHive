@@ -1,45 +1,22 @@
 import PropTypes from 'prop-types';
-import Placeholder from "../../../assets/img-placeholder.jpg"
-import axios from 'axios';
+import Placeholder from '../../../assets/img-placeholder.jpg';
 import { useState } from 'react';
 import { BsBookmark, BsFillBookmarkCheckFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
 const ProjectCard = ({
-  projectLink,
-  logoLink,
-  name,
-  description,
-  tags: propsTags,
+  project,
   bookMarkProjects,
   getBookMarkProjects,
 }) => {
-
   const navigate = useNavigate();
-  const [issues, setIssues] = useState(null);
-  const [issueType , setIssueType] = useState("goodfirstissues")
-  //TODO: create an option to choose betweeen goodfirstissues, firsttimersonly, help wanted issues
-  const [isLoading, setIsLoading] = useState(false)
+
   const [isBookmarked, setIsBookmarked] = useState(
-    bookMarkProjects.includes(projectLink)
+    bookMarkProjects.includes(project.projectLink)
   );
+  
 
-  const getIssues = async () => {
-    setIsLoading(true)
-    console.log("Finding Issues for link : " + projectLink);
-    const getLastTwoHeaders = (link) => link.split('/').slice(-2);
-    const lastTwoHeaders = getLastTwoHeaders(projectLink);
-    var orgName = lastTwoHeaders[0];
-    var projectName = lastTwoHeaders[1];
-    const response = await axios.get(`https://issue-finder-api.vercel.app/api/${issueType}/${orgName}/${projectName}`);
-    const data = response.data;
-    setIssues(data.issues);
-    setIsLoading(false);
-     navigate('/issues', { state: { issues: data.issues } });
-  }
-
-
-  const tags = propsTags.map((tag, key) => (
+  const tags = project.tags.map((tag, key) => (
     <span
       key={key}
       className="inline-block px-2 py-1 mb-2 mr-2 text-xs font-medium text-white bg-gray-600 rounded-full"
@@ -74,9 +51,9 @@ const ProjectCard = ({
         localStorage.getItem('bookMarkProjects')
       );
       if (bookMarkProjects === null) {
-        bookMarkProjects = [projectLink];
+        bookMarkProjects = [project.projectLink];
       } else {
-        bookMarkProjects.push(projectLink);
+        bookMarkProjects.push(project.projectLink);
       }
       localStorage.setItem(
         'bookMarkProjects',
@@ -87,6 +64,13 @@ const ProjectCard = ({
     }
   };
 
+  const handleViewIssues = (projectLink) => {
+    const [organization, projectName] = projectLink.split('/').slice(-2);
+    console.log(organization, projectName);
+
+    navigate(`/issues/${organization}/${projectName}`);
+  }
+
   return (
     <div className="flex self-auto flex-col h-full w-96 max-w-full border rounded-lg shadow bg-gray-800 border-gray-700 relative">
       <div
@@ -95,37 +79,37 @@ const ProjectCard = ({
       >
         {isBookmarked ? <BsFillBookmarkCheckFill /> : <BsBookmark />}
       </div>
-      <a href={projectLink}>
+      <a href={project.projectLink}>
         <img
           rel="preload"
           loading="lazy"
           className="h-28 overflow-hidden object-scale-down mx-auto w-full rounded-t-lg"
-          src={logoLink}
+          src={project.imageSrc}
           alt=""
           onError={(e) => {
-            e.target.className = "bg-white h-28 overflow-hidden object-scale-down mx-auto w-full rounded-t-lg"
-            e.target.src = Placeholder
+            e.target.className =
+              'bg-white h-28 overflow-hidden object-scale-down mx-auto w-full rounded-t-lg';
+            e.target.src = Placeholder;
           }}
         />
       </a>
       <div className="grid grid-cols-1 h-full p-5">
-        <a href={projectLink}>
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white capitalize">{name}</h5>
+        <a href={project.projectLink}>
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white capitalize">
+            {name}
+          </h5>
         </a>
-        <p className="mb-3 font-normal text-gray-400">{description}</p>
+        <p className="mb-3 font-normal text-gray-400">{project?.description}</p>
         <div className="mb-3">{tags}</div>
         <div>
-          <button onClick={getIssues}>
+          {/* send the project name as a prams  */}
+          <button onClick={() => handleViewIssues(project.projectLink)}>
             <a
               target="_blank"
               rel="noreferrer"
               className="issue-btn inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-900 rounded-lg hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 "
             >
-              {
-                isLoading ?
-                  "Loading..." :
-                  "Find Issues"
-              }
+              View Issues
               <svg
                 className="w-3.5 h-3.5 ml-2"
                 aria-hidden="true"
@@ -143,7 +127,6 @@ const ProjectCard = ({
               </svg>
             </a>
           </button>
-
         </div>
       </div>
     </div>
@@ -153,11 +136,13 @@ const ProjectCard = ({
 export default ProjectCard;
 
 ProjectCard.propTypes = {
-  projectLink: PropTypes.string,
-  logoLink: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string),
+  project: PropTypes.shape({
+    projectLink: PropTypes.string,
+    imageSrc: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    tags: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
   bookMarkProjects: PropTypes.arrayOf(PropTypes.string),
   getBookMarkProjects: PropTypes.func,
 };

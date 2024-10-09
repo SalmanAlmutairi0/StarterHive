@@ -16,7 +16,7 @@ function App() {
             <Route path="/contributors" element={<Contributors />} />
             <Route path="/Docs" element={<Guide />} />
             <Route path="/projects" element={<ProjectList />} />
-            <Route path="/issues" element={<IssueList />} />
+            <Route path="/issues/:orgName/:projectName" element={<IssueList />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </ScrollTop>

@@ -44,12 +44,17 @@ const ProjectList = () => {
   // Get all the languages/tags from the project list
   const getLanguages = () => {
     const projectsLanguage = [];
+
     projectList.map((project) => {
+    
       project.tags.map((tag) => {
+    
         if (!projectsLanguage.includes(tag)) {
           projectsLanguage.push(tag);
         }
+    
       });
+    
     });
     setLanguages(projectsLanguage);
   };
@@ -102,11 +107,7 @@ const ProjectList = () => {
           return (
             <ProjectCard
               key={key}
-              name={project.name}
-              logoLink={project.imageSrc}
-              projectLink={project.projectLink}
-              description={project.description}
-              tags={project.tags}
+              project={project}
               bookMarkProjects={bookMarkProjects}
               getBookMarkProjects={getBookMarkProjects}
             />
