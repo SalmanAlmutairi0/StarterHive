@@ -99,7 +99,7 @@ const ProjectList = () => {
       <div className="flex w-full items-center justify-center">
         {<ScaleLoader loading={!bookMarkProjects} color="white" />}
       </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-4 xl:grid-cols-3 2xl:gap-7.5 bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-animate place-items-center">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-4 xl:grid-cols-3 2xl:gap-7.5  place-items-center">
         {bookMarkProjects && projectList.map((project, key) => {
           if (!filterProject(project)) {
             return null;
