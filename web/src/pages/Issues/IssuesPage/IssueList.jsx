@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import IssueItem from './IssueItem';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { ScaleLoader } from 'react-spinners';
 export const IssueList = () => {
   const [issues, setIssues] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +16,7 @@ export const IssueList = () => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `https://issue-finder-api.vercel.app/api/goodfirstissues/${organization}/${projectName}`
+          `https://issue-finder-api.vercel.app/api/goodfirstissues/${organization.trim()}/${projectName.trim()}`
         );
 
         setIssues(response.data.issues);
@@ -42,13 +43,15 @@ export const IssueList = () => {
             </h1>
           </div>
 
-          {isLoading && <p className="text-center">Loading...</p>}
+          {isLoading && (
+            <ScaleLoader color="white" size={30} className="text-center" />
+          )}
 
           {!isLoading && issues.length === 0 && (
             <p className="text-center text-3xl">No issues found.</p>
           )}
 
-          <div className="grid grid-cols-4 gap-5">
+          <div className="flex flex-col gap-y-6 w-full">
             {issues.map((issue, index) => {
               return (
                 <IssueItem
