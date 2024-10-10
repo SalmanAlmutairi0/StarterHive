@@ -82,7 +82,7 @@ const ProjectCard = ({
   }
 
   return (
-    <div className="flex self-auto flex-col h-full w-96 max-w-full border rounded-lg shadow bg-gray-800 border-gray-700 relative">
+    <div className="flex self-auto flex-col h-full w-96 max-w-full border rounded-lg shadow bg-gray-800 border-gray-700 relative space-y-3">
       <div
         className="absolute text-2xl right-2 top-2 text-yellow-400 cursor-pointer"
         onClick={handleBookmark}
@@ -93,7 +93,7 @@ const ProjectCard = ({
         <img
           rel="preload"
           loading="lazy"
-          className="h-28 overflow-hidden object-scale-down mx-auto w-full rounded-t-lg"
+          className="w-32 mx-auto rounded-lg"
           src={project.imageSrc}
           alt=""
           onError={(e) => {
